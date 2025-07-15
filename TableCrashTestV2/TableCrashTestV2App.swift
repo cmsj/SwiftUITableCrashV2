@@ -9,9 +9,22 @@ import SwiftUI
 
 @main
 struct TableCrashTestV2App: App {
+    @State var viewModel = ViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: $viewModel)
+        }
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button(action: {
+                    print("DELETE MENU")
+                    viewModel.deleteSelected()
+                }) {
+                    Text("Delete")
+                }
+                .keyboardShortcut(.delete)
+            }
         }
     }
 }
