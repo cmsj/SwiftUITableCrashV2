@@ -7,7 +7,13 @@
 
 import SwiftUI
 
-@Observable // If this is removed, the Table never updates when the nodes change
+// We can rule out Node being @Observable as being relevant to the crash:
+//  * Comment out the @Observable macro
+//  * in ViewModel::deleteSelected() uncomment the withMutation wrapper
+//  * in the .dropDestination() handler below, uncomment the withMutation wrapper
+//  * Build&Run, the crash is still reproducible
+
+@Observable
 final class Node: Identifiable, Transferable {
     let id = UUID()
     var name: String = "UNKNOWN"
@@ -41,7 +47,10 @@ final class ViewModel {
 
     func deleteSelected() {
         if !selectedEntries.isEmpty {
-            root.children!.removeAll { selectedEntries.contains($0.id) }
+            // Uncomment the withMutation if you have removed @Observable from Node
+//            self.withMutation(keyPath: \.root) {
+                root.children!.removeAll { selectedEntries.contains($0.id) }
+//            }
         }
     }
 }
@@ -52,6 +61,8 @@ struct ContentView: View {
     @AppStorage("TableCustomisation") var columnCustomization: TableColumnCustomization<Node>
 
     var body: some View {
+        let _ = Self._printChanges()
+
         Table(of: Node.self, selection: $viewModel.selectedEntries, sortOrder: $viewModel.sortOrder, columnCustomization: $columnCustomization) {
             TableColumn("ID", value: \Node.id.uuidString)
             TableColumn("Name", value: \Node.name)
@@ -65,7 +76,10 @@ struct ContentView: View {
             }
         }
         .dropDestination(for: Node.self) { items, _ in
-            viewModel.root.children!.append(contentsOf: items)
+            // Uncomment the withMutation if you have removed @Observable from Node
+//            viewModel.withMutation(keyPath: \.root) {
+                viewModel.root.children!.append(contentsOf: items)
+//            }
             return true
         }
     }

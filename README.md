@@ -8,5 +8,8 @@ STEPS TO REPRODUCE CRASH:
 
 Objections I have had from DTS so far and my arguments why they are wrong:
 
- * The Node objects should not be @Observable - this seems to be required for the Table to ever update when the node tree changes
- * The children property should be non-Optional - this is required for OutlineGroup to work.
+ * The Node objects should not be @Observable
+   * This is the easiest way to get the table to automatically update when the tree changes.
+   * It can be avoided using withMutation, but this is irrelevant because the crash still happens
+ * The children property should be non-Optional
+   * This is required for OutlineGroup to work.
