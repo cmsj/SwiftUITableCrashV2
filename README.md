@@ -6,6 +6,8 @@ STEPS TO REPRODUCE CRASH:
  5. Drag a file from Finder onto the app window.
  6. The app just crashed
 
+NOTE: The crash does not happen if the .dropDestination() is removed from TableRow, but in the live app it's kinda important to be able to drag to specific points of the tree, so just removing this doesn't seem viable.
+
 Objections I have had from DTS so far and my arguments why they are wrong:
 
  * The Node objects should not be @Observable
