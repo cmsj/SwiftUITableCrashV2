@@ -28,7 +28,7 @@ struct TableCrashTestV2App: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button(action: {
-                    print("DELETE MENU")
+                    print("Delete Menu:: Shortcut pressed")
                     viewModel.deleteSelected()
                 }) {
                     Text("Delete")

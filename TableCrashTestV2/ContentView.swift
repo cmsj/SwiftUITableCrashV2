@@ -22,6 +22,7 @@ final class Node: Identifiable, Transferable {
 
     static var transferRepresentation: some TransferRepresentation {
         FileRepresentation(contentType: .data, shouldAttemptToOpenInPlace: true) { node in
+            print("Node transferRepresentation:: Exporting \(node.url)")
             return SentTransferredFile(node.url)
         } importing: { receivedFile in
             let url = receivedFile.file
@@ -29,6 +30,7 @@ final class Node: Identifiable, Transferable {
             let newNode = Node()
             newNode.name = name
             newNode.url = url
+            print("Node transferRepresentation: Importing \(url)")
             return newNode
         }
     }
@@ -42,6 +44,7 @@ final class ViewModel {
     var sortOrder = [KeyPathComparator(\Node.name)]
 
     init() {
+        print("ViewModel init:: Setting root.children to empty")
         root.children = []
     }
 
@@ -49,6 +52,7 @@ final class ViewModel {
         if !selectedEntries.isEmpty {
             // Uncomment the withMutation if you have removed @Observable from Node
 //            self.withMutation(keyPath: \.root) {
+                print("deleteSelected():: Deleting entries")
                 root.children!.removeAll { selectedEntries.contains($0.id) }
 //            }
         }
@@ -71,6 +75,7 @@ struct ContentView: View {
             OutlineGroup(viewModel.root.children!, children: \.children) { node in
                 TableRow(node)
                     .dropDestination(for: Node.self) { items in
+                        // Don't actually need to implement this for the crash, but we would parent the dropped file into node.children
                         print(items)
                     }
             }
@@ -78,6 +83,7 @@ struct ContentView: View {
         .dropDestination(for: Node.self) { items, _ in
             // Uncomment the withMutation if you have removed @Observable from Node
 //            viewModel.withMutation(keyPath: \.root) {
+                print("Table dropDestination: Adding \(items.count) dropped items")
                 viewModel.root.children!.append(contentsOf: items)
 //            }
             return true
